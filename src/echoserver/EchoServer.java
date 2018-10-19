@@ -1,4 +1,42 @@
 package echoserver;
 
+import java.net.*;
+import java.io.*;
+
 public class EchoServer {
+    public static final int portNumber = 6013;
+
+    public static void main(String[] args) {
+        try {
+            // Start listening on the specified port
+            ServerSocket sock = new ServerSocket(portNumber);
+
+            // Run forever, which is common for server style services
+            while (true) {
+                // Wait until someone connects, thereby requesting a date
+                Socket client = sock.accept();
+                System.out.println("Got a request!");
+
+                // Construct a writer so we can write to the socket, thereby
+                // sending something back to the client.
+                InputStream reader = client.getInputStream();
+                OutputStream writer = client.getOutputStream();
+
+                // Send the current date back to the client.
+                //writer.println(new java.util.Date().toString());
+                int input;
+                while((input = reader.read()) != -1) {
+                    writer.write(input);
+                    System.out.println("Send back a response!");
+                }
+
+                // Close the client socket since we're done.
+                client.close();
+            }
+            // *Very* minimal error handling.
+        } catch (IOException ioe) {
+            System.out.println("We caught an unexpected exception");
+            System.err.println(ioe);
+        }
+    }
 }
