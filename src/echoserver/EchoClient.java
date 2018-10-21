@@ -18,18 +18,27 @@ public class EchoClient {
             // Connect to the server
             Socket socket = new Socket(server, portNumber);
 
+            // The output stream
+            OutputStream writer = socket.getOutputStream();
+            // Get the bite from the keyboard, writes it to server in the next while loop
+            InputStream key = System.in;
             // Get the input stream so we can read from that socket
-            InputStream input = socket.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+            InputStream reader = socket.getInputStream();
 
             // Print all the input we receive from the server
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
+            int keyValue;
+            int input;
+            while ((keyValue = key.read()) != -1) {
+                writer.write(keyValue);
+                input = reader.read();
+                System.out.write(input);
             }
 
             // Close the socket when we're done reading from it
             socket.close();
+
+            // Flush out the writer data
+            System.out.flush();
 
             // Provide some minimal error handling.
         } catch (ConnectException ce) {
